@@ -1,0 +1,401 @@
+@model IEnumerable<PriorityMatchingList.Models.PriorityMatchingListItem>
+@{
+    ViewData["Title"] = "Priority Matching List";
+    var serviceOrder = ViewBag.ServiceOrder as PriorityMatchingList.Models.ServiceOrder;
+    var employees = ViewBag.Employees as Dictionary<int, dynamic>;
+}
+
+<div class="container-fluid mt-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb shadow-sm">
+            <li class="breadcrumb-item">
+                <a asp-action="Index" class="text-decoration-none">
+                    <i class="fas fa-clipboard-list"></i> My Service Orders
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a asp-action="Details" asp-route-id="@serviceOrder?.ServiceOrderID" class="text-decoration-none">
+                    <i class="fas fa-eye"></i> Order #@serviceOrder?.ServiceOrderID
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fas fa-sort-amount-down"></i> Priority List
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Service Order Summary Card -->
+    <div class="card fade-in mb-4">
+        <div class="card-header">
+            <h4><i class="fas fa-sort-amount-down"></i> Priority Matching List for Service Order #@serviceOrder?.ServiceOrderID</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="service-summary-item">
+                        <div class="summary-label">
+                            <i class="fas fa-building"></i> Account
+                        </div>
+                        <div class="summary-value">@serviceOrder?.AccountName</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="service-summary-item">
+                        <div class="summary-label">
+                            <i class="fas fa-map-marker-alt"></i> Location
+                        </div>
+                        <div class="summary-value">@serviceOrder?.Location</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="service-summary-item">
+                        <div class="summary-label">
+                            <i class="fas fa-user-tie"></i> Role
+                        </div>
+                        <div class="summary-value">@serviceOrder?.CCArole</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Priority Matching Table -->
+    <div class="card fade-in">
+        <div class="card-header">
+            <h5><i class="fas fa-users"></i> Employee Priority Matching (@(Model?.Count() ?? 0) Candidates)</h5>
+        </div>
+        <div class="card-body p-0">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table priority-table">
+                        <thead>
+                            <tr>
+                                <th class="priority-cell">
+                                    <i class="fas fa-trophy"></i> Priority
+                                </th>
+                                <th>
+                                    <i class="fas fa-user"></i> Employee
+                                </th>
+                                <th>
+                                    <i class="fas fa-star"></i> Grade
+                                </th>
+                                <th>
+                                    <i class="fas fa-map-pin"></i> Location
+                                </th>
+                                <th>
+                                    <i class="fas fa-envelope"></i> Contact
+                                </th>
+                                <th class="score-cell">
+                                    <i class="fas fa-chart-line"></i> Score
+                                </th>
+                                <th class="willing-cell">
+                                    <i class="fas fa-thumbs-up"></i> Willing
+                                </th>
+                                <th>
+                                    <i class="fas fa-comment"></i> Remarks
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OrderBy(x => x.Priority ?? int.MaxValue))
+                            {
+                                var employee = employees?.ContainsKey(item.EmployeeID) == true ? employees[item.EmployeeID] : null;
+                                var isTopPriority = item.Priority == 1;
+                                var rowClass = isTopPriority ? "table-warning" : "";
+                                
+                                <tr class="@rowClass">
+                                    <td class="priority-cell">
+                                        @if (item.Priority.HasValue)
+                                        {
+                                            var priorityClass = item.Priority.Value switch
+                                            {
+                                                1 => "badge-success",
+                                                2 => "badge-info", 
+                                                3 => "badge-warning",
+                                                _ => "badge-primary"
+                                            };
+                                            <span class="badge @priorityClass priority-badge">
+                                                @if (item.Priority.Value == 1)
+                                                {
+                                                    <i class="fas fa-medal"></i>
+                                                }
+                                                #@item.Priority
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (employee != null)
+                                        {
+                                            <div class="employee-info-cell">
+                                                <strong class="employee-name">@employee.FirstName @employee.LastName</strong>
+                                                <small class="employee-id">ID: @item.EmployeeID</small>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="employee-info-cell">
+                                                <strong class="text-warning">Employee @item.EmployeeID</strong>
+                                                <small class="text-muted">Not found in Employee table</small>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (employee?.Grade != null && !string.IsNullOrEmpty(employee.Grade))
+                                        {
+                                            <span class="badge badge-secondary">@employee.Grade</span>
+                                        }
+                                        else if (employee != null)
+                                        {
+                                            <span class="text-warning">No Grade</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (employee?.Location != null && !string.IsNullOrEmpty(employee.Location))
+                                        {
+                                            <span class="location-badge">
+                                                <i class="fas fa-map-pin"></i> @employee.Location
+                                            </span>  
+                                        }
+                                        else if (employee != null)
+                                        {
+                                            <span class="text-warning">No Location</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (employee?.EmailID != null && !string.IsNullOrEmpty(employee.EmailID))
+                                        {
+                                            <a href="mailto:@employee.EmailID" class="email-link">
+                                                <i class="fas fa-envelope"></i> @employee.EmailID
+                                            </a>
+                                        }
+                                        else if (employee != null)
+                                        {
+                                            <span class="text-warning">No Email</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td class="score-cell">
+                                        @if (item.MatchingIndexScore.HasValue)
+                                        {
+                                            var scoreClass = item.MatchingIndexScore.Value switch
+                                            {
+                                                >= 90 => "badge-success",
+                                                >= 70 => "badge-info",
+                                                >= 50 => "badge-warning",
+                                                _ => "badge-danger"
+                                            };
+                                            <span class="badge @scoreClass score-badge">
+                                                @item.MatchingIndexScore%
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td class="willing-cell">
+                                        @if (item.AssociateWilling.HasValue)
+                                        {
+                                            if (item.AssociateWilling.Value)
+                                            {
+                                                <span class="badge badge-success willing-badge">
+                                                    <i class="fas fa-check"></i> Yes
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-danger willing-badge">
+                                                    <i class="fas fa-times"></i> No
+                                                </span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-warning willing-badge">
+                                                <i class="fas fa-question"></i> Unknown
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(item.Remarks))
+                                        {
+                                            <div class="remarks-cell" title="@item.Remarks">
+                                                @(item.Remarks.Length > 50 ? item.Remarks.Substring(0, 50) + "..." : item.Remarks)
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <div class="alert alert-info d-inline-block">
+                        <i class="fas fa-info-circle fa-2x mb-3"></i>
+                        <h5>No Priority Matching Data Found</h5>
+                        <p class="mb-0">No priority matching data found for this service order.</p>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="card-footer">
+            <div class="d-flex gap-3 flex-wrap action-buttons">
+                <a asp-action="Index" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Back to My Service Orders
+                </a>
+                <a asp-action="Details" asp-route-id="@serviceOrder?.ServiceOrderID" class="btn btn-success">
+                    <i class="fas fa-eye"></i> View Service Order Details
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .service-summary-item {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 10px; 
+        padding: 15px;
+        margin-bottom: 15px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    .service-summary-item:hover {
+        border-color: #667eea;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .summary-label {
+        font-weight: 600;
+        color: #667eea;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+    
+    .summary-value {
+        font-weight: 700;
+        color: #495057;
+        font-size: 1.1rem;
+    }
+    
+    .employee-info-cell {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .employee-name {
+        color: #495057;
+        margin-bottom: 2px;
+    }
+    
+    .employee-id {
+        color: #6c757d;
+        font-size: 0.8rem;
+    }
+    
+    .priority-badge {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+        font-weight: 700;
+    }
+    
+    .score-badge {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+        font-weight: 600;
+    }
+    
+    .willing-badge {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        font-weight: 600;
+    }
+    
+    .location-badge {
+        color: #495057;
+        font-size: 0.9rem;
+    }
+    
+    .email-link {
+        color: #667eea;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+    
+    .email-link:hover {
+        color: #5a6fd8;
+        text-decoration: underline;
+    }
+    
+    .remarks-cell {
+        font-size: 0.85rem;
+        color: #495057;
+        max-width: 200px;
+        cursor: help;
+    }
+    
+    .table-warning {
+        background-color: rgba(255, 193, 7, 0.1) !important;
+    }
+    
+    .priority-table .priority-cell,
+    .priority-table .score-cell,
+    .priority-table .willing-cell {
+        text-align: center;
+        vertical-align: middle;
+    }
+    
+    .breadcrumb {
+        background: white;
+        border-radius: 10px;
+        padding: 15px 20px;
+        border: 1px solid #e9ecef;
+    }
+    
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: ">";
+        color: #667eea;
+        font-weight: bold;
+    }
+    
+    /* Action buttons styling to prevent footer overlap */
+    .action-buttons {
+        margin-bottom: 20px !important;
+        padding-bottom: 15px;
+    }
+    
+    .card-footer {
+        margin-bottom: 30px;
+    }
+    
+    /* Ensure main content container has sufficient bottom margin */
+    .container-fluid.mt-4 {
+        margin-bottom: 60px !important;
+    }
+</style>

@@ -1,0 +1,111 @@
+@model PriorityMatchingList.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Employee Login";
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg mt-5">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-circle me-2"></i>
+                        Priority Matching System
+                    </h4>
+                    <p class="mb-0 mt-2">Employee Login</p>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Login" asp-controller="Auth" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        
+                        <input name="ReturnUrl" type="hidden" value="@ViewData["ReturnUrl"]" />
+                        
+                        <div class="mb-3">
+                            <label asp-for="EmployeeID" class="form-label">
+                                <i class="fas fa-id-badge me-1"></i>
+                                @Html.DisplayNameFor(m => m.EmployeeID)
+                            </label>
+                            <input asp-for="EmployeeID" class="form-control form-control-lg" placeholder="Enter your Employee ID" autocomplete="username" />
+                            <span asp-validation-for="EmployeeID" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label">
+                                <i class="fas fa-lock me-1"></i>
+                                @Html.DisplayNameFor(m => m.Password)
+                            </label>
+                            <input asp-for="Password" class="form-control form-control-lg" placeholder="Enter your password" autocomplete="current-password" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input asp-for="RememberMe" class="form-check-input" />
+                            <label asp-for="RememberMe" class="form-check-label">
+                                @Html.DisplayNameFor(m => m.RememberMe)
+                            </label>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>
+                                Sign In
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center text-muted">
+                    <small>
+                        <i class="fas fa-shield-alt me-1"></i>
+                        Secure login with your Employee ID and Password
+                    </small>
+                </div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <a asp-controller="DatabaseTest" asp-action="TestConnection" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-database me-1"></i>
+                    Test Database Connection
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 15px;
+    }
+    
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+        border: none;
+    }
+    
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(45deg, #5a6fd8, #6a4190);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,21 @@
+@* Validation Scripts Partial View *@
+<script>
+    // Simple client-side validation
+    $(document).ready(function() {
+        $('form').on('submit', function(e) {
+            var isValid = true;
+            $(this).find('input[required]').each(function() {
+                if ($(this).val().trim() === '') {
+                    isValid = false;
+                    $(this).addClass('is-invalid');
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+            if (!isValid) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    });
+</script>

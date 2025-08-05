@@ -1,0 +1,166 @@
+@model PriorityMatchingList.Models.Employee
+
+@{
+    ViewData["Title"] = "Employee Details";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Personal Information</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Employee ID:</dt>
+                        <dd class="col-sm-8">@Model.EmployeeID</dd>
+
+                        <dt class="col-sm-4">Full Name:</dt>
+                        <dd class="col-sm-8">@Model.FullName</dd>
+
+                        <dt class="col-sm-4">First Name:</dt>
+                        <dd class="col-sm-8">@Model.FirstName</dd>
+
+                        <dt class="col-sm-4">Last Name:</dt>
+                        <dd class="col-sm-8">@Model.LastName</dd>
+
+                        <dt class="col-sm-4">Email:</dt>
+                        <dd class="col-sm-8">@Model.EmailID</dd>
+
+                        @if (Model.DateofJoin.HasValue)
+                        {
+                            <dt class="col-sm-4">Date of Join:</dt>
+                            <dd class="col-sm-8">@Model.DateofJoin.Value.ToShortDateString()</dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Work Information</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Grade:</dt>
+                        <dd class="col-sm-8">@Model.Grade</dd>
+
+                        <dt class="col-sm-4">Location:</dt>
+                        <dd class="col-sm-8">@Model.Location</dd>
+
+                        <dt class="col-sm-4">Location Preference:</dt>
+                        <dd class="col-sm-8">@Model.LocationPreference</dd>
+
+                        <dt class="col-sm-4">Available for Deployment:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.AvailableForDeployment == true)
+                            {
+                                <span class="badge bg-success">Yes</span>
+                            }
+                            else if (Model.AvailableForDeployment == false)
+                            {
+                                <span class="badge bg-danger">No</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Unknown</span>
+                            }
+                        </dd>
+
+                        @if (Model.Supervisor != null)
+                        {
+                            <dt class="col-sm-4">Supervisor:</dt>
+                            <dd class="col-sm-8">
+                                <a asp-action="Details" asp-route-id="@Model.Supervisor.EmployeeID">
+                                    @Model.Supervisor.FullName
+                                </a>
+                            </dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Subordinates != null && Model.Subordinates.Any())
+    {
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>Direct Reports (@Model.Subordinates.Count())</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    @foreach (var subordinate in Model.Subordinates)
+                    {
+                        <div class="col-md-4 mb-2">
+                            <div class="card">
+                                <div class="card-body p-2">
+                                    <h6 class="card-title mb-1">@subordinate.FullName</h6>
+                                    <p class="card-text small mb-1">@subordinate.Grade - @subordinate.Location</p>
+                                    <a asp-action="Details" asp-route-id="@subordinate.EmployeeID" class="btn btn-sm btn-outline-primary">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Model.Users != null && Model.Users.Any())
+    {
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>User Accounts (@Model.Users.Count())</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Model.Users)
+                            {
+                                <tr>
+                                    <td>@user.UserID</td>
+                                    <td>
+                                        @if (user.Active == true)
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else if (user.Active == false)
+                                        {
+                                            <span class="badge bg-danger">Inactive</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Unknown</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a asp-controller="Users" asp-action="Details" asp-route-id="@user.UserID" class="btn btn-sm btn-outline-primary">View User</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="mt-3">
+        <a asp-action="Index" class="btn btn-primary">Back to Employees List</a>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Home</a>
+    </div>
+</div>

@@ -1,0 +1,115 @@
+@model PriorityMatchingList.Models.User
+
+@{
+    ViewData["Title"] = "User Details";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+
+    <div class="card">
+        <div class="card-header">
+            <h5>User Information</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">User ID:</dt>
+                        <dd class="col-sm-8">@Model.UserID</dd>
+
+                        <dt class="col-sm-4">Employee ID:</dt>
+                        <dd class="col-sm-8">@Model.EmployeeID</dd>
+
+                        <dt class="col-sm-4">Employee Name:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Employee != null)
+                            {
+                                @Model.Employee.FullName
+                            }
+                            else
+                            {
+                                <span class="text-muted">Employee not found</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">Status:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Active == true)
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else if (Model.Active == false)
+                            {
+                                <span class="badge bg-danger">Inactive</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Unknown</span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+                
+                @if (Model.Employee != null)
+                {
+                    <div class="col-md-6">
+                        <h6>Employee Details:</h6>
+                        <dl class="row">
+                            <dt class="col-sm-4">First Name:</dt>
+                            <dd class="col-sm-8">@Model.Employee.FirstName</dd>
+
+                            <dt class="col-sm-4">Last Name:</dt>
+                            <dd class="col-sm-8">@Model.Employee.LastName</dd>
+
+                            <dt class="col-sm-4">Email:</dt>
+                            <dd class="col-sm-8">@Model.Employee.EmailID</dd>
+
+                            <dt class="col-sm-4">Grade:</dt>
+                            <dd class="col-sm-8">@Model.Employee.Grade</dd>
+
+                            <dt class="col-sm-4">Location:</dt>
+                            <dd class="col-sm-8">@Model.Employee.Location</dd>
+
+                            <dt class="col-sm-4">Location Preference:</dt>
+                            <dd class="col-sm-8">@Model.Employee.LocationPreference</dd>
+
+                            @if (Model.Employee.DateofJoin.HasValue)
+                            {
+                                <dt class="col-sm-4">Date of Join:</dt>
+                                <dd class="col-sm-8">@Model.Employee.DateofJoin.Value.ToShortDateString()</dd>
+                            }
+
+                            <dt class="col-sm-4">Available for Deployment:</dt>
+                            <dd class="col-sm-8">
+                                @if (Model.Employee.AvailableForDeployment == true)
+                                {
+                                    <span class="badge bg-success">Yes</span>
+                                }
+                                else if (Model.Employee.AvailableForDeployment == false)
+                                {
+                                    <span class="badge bg-danger">No</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Unknown</span>
+                                }
+                            </dd>
+
+                            @if (Model.Employee.Supervisor != null)
+                            {
+                                <dt class="col-sm-4">Supervisor:</dt>
+                                <dd class="col-sm-8">@Model.Employee.Supervisor.FullName</dd>
+                            }
+                        </dl>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a asp-action="Index" class="btn btn-primary">Back to Users List</a>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Home</a>
+    </div>
+</div>

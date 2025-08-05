@@ -1,0 +1,87 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container mt-1">
+    <div class="row">
+        <div class="col-12">
+            <div class="jumbotron bg-primary text-white p-2 rounded">
+                <h1 class="display-4">
+                    <i class="fas fa-users me-3"></i>
+                    Welcome to Priority Matching System
+                </h1>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <p class="lead mb-1">Hello, <strong>@User.Identity.Name</strong>!</p>
+                    <p class="mb-1">Employee ID: <strong>@User.FindFirst("EmployeeID")?.Value</strong></p>
+                    @if (User.FindFirst("Grade")?.Value != null)
+                    {
+                        <p class="mb-1">Grade: <strong>@User.FindFirst("Grade")?.Value</strong></p>
+                    }
+                    @if (User.FindFirst("Location")?.Value != null)
+                    {
+                        <p class="mb-0">Location: <strong>@User.FindFirst("Location")?.Value</strong></p>
+                    }
+                }
+                else
+                {
+                    <p class="lead">Please log in to access the system.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="row mt-1">
+            <div class="col-md-12 mb-1">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center py-2">
+                        <i class="fas fa-clipboard-list fa-3x text-info mb-3"></i>
+                        <h4 class="card-title">My Service Orders</h4>
+                        <p class="card-text">View your assigned service orders and project details.</p>
+                        <a asp-controller="ServiceOrder" asp-action="Index" class="btn btn-info btn-lg">
+                            <i class="fas fa-eye me-2"></i>View My Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            System Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-2"><strong>Current User:</strong> @User.Identity.Name</p>
+                        <p class="mb-2"><strong>Employee ID:</strong> @User.FindFirst("EmployeeID")?.Value</p>
+                        <p class="mb-2"><strong>Login Time:</strong> @DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")</p>
+                        <a asp-controller="DatabaseTest" asp-action="TestConnection" class="btn btn-outline-info btn-sm">
+                            <i class="fas fa-database me-1"></i>
+                            Test Database Connection
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .jumbotron {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .card {
+        transition: transform 0.2s;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+</style>

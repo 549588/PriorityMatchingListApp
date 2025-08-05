@@ -1,0 +1,91 @@
+@model List<ServiceOrder>
+@{
+    ViewData["Title"] = "All Service Orders";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h4><i class="fas fa-list-alt"></i> All Service Orders (@Model.Count)</h4>
+        </div>
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Resource ID</th>
+                                <th>Resource Name</th>
+                                <th>Account Name</th>
+                                <th>Location</th>
+                                <th>Required From</th>
+                                <th>Grade</th>
+                                <th>State</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model)
+                            {
+                                <tr>
+                                    <td><strong>@order.ServiceOrderID</strong></td>
+                                    <td>@order.AssignedToResource</td>
+                                    <td>
+                                        @if (order.AssignedToResource.HasValue && ViewBag.Employees != null && ((Dictionary<int, dynamic>)ViewBag.Employees).ContainsKey(order.AssignedToResource.Value))
+                                        {
+                                            var employee = ((Dictionary<int, dynamic>)ViewBag.Employees)[order.AssignedToResource.Value];
+                                            @employee.FirstName @employee.LastName
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </td>
+                                    <td>@order.AccountName</td>
+                                    <td>@order.Location</td>
+                                    <td>@order.RequiredFrom?.ToString("dd/MM/yyyy")</td>
+                                    <td>@order.Grade</td>
+                                    <td>
+                                        <span class="badge bg-info">@order.SOState</span>
+                                    </td>
+                                    <td>
+                                        <a asp-action="Details" asp-route-id="@order.ServiceOrderID" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i> Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-info-circle"></i>
+                    <h5>No Service Orders Found</h5>
+                    <p>There are no service orders in the system.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: none;
+        border-radius: 10px;
+    }
+    
+    .table th {
+        border-top: none;
+    }
+    
+    .badge {
+        font-size: 0.75em;
+    }
+</style>

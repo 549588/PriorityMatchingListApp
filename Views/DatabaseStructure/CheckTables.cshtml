@@ -1,0 +1,58 @@
+@{
+    ViewData["Title"] = "Database Structure Check";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+    
+    @if (ViewBag.Status == "Success")
+    {
+        <div class="alert alert-success" role="alert">
+            <i class="fas fa-check-circle"></i> @ViewBag.Message
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5>ServiceOrder Table Columns</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            @foreach (var column in ViewBag.ServiceOrderColumns)
+                            {
+                                <li class="list-group-item">@column</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5>Employee Table Columns</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            @foreach (var column in ViewBag.EmployeeColumns)
+                            {
+                                <li class="list-group-item">@column</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-triangle"></i> @ViewBag.Message
+        </div>
+    }
+    
+    <div class="mt-3">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Back to Home</a>
+    </div>
+</div>

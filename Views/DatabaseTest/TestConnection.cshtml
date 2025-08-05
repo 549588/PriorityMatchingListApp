@@ -1,0 +1,36 @@
+@{
+    ViewData["Title"] = "Database Connection Test";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5>SQL Server Connection Test</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>@ViewBag.ServerInfo</strong></p>
+            <p><strong>Database:</strong> TestDB</p>
+            <p><strong>User:</strong> sa</p>
+            
+            @if (ViewBag.ConnectionStatus == "Success")
+            {
+                <div class="alert alert-success" role="alert">
+                    <i class="fas fa-check-circle"></i> @ViewBag.Message
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> @ViewBag.Message
+                </div>
+            }
+        </div>
+    </div>
+    
+    <div class="mt-3">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Back to Home</a>
+        <a asp-controller="DatabaseTest" asp-action="TestConnection" class="btn btn-secondary">Test Again</a>
+    </div>
+</div>
